@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 from os import listdir
+import sklearn
 from sklearn import svm
 from os.path import isfile, join
 from sklearn.externals import joblib
@@ -12,28 +13,33 @@ training_labels = []
 
 print 'training...'
 for root, dirs, files in os.walk(path):
-    for name in files:
-        if name.endswith((".png")):
-        	if (os.path.getsize(root + str('/') + name)) != 0 :
-        		label = root.split('/')[1]
-        		img = cv2.imread(root +str('/')+ name)
-        		res = cv2.resize(img,(250,250))
-        		gray_image = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
-        		xarr = np.squeeze(np.array(gray_image).astype(np.float32))
-        		m,v = cv2.PCACompute(xarr)
-        		arr = np.array(v)
-        		flat_arr = arr.ravel()
-        		training_set.append(flat_arr)
-        		training_labels.append(label)
+	print 'processing.. ',root
+	for name in files:
+		if name.endswith((".png")):
+			if (os.path.getsize(root + str('/') + name)) != 0 :
+				label = root.split('/')[1]
+				img = cv2.imread(root +str('/')+ name)
+				res = cv2.resize(img,(250,250))
+				gray_image = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
+				xarr = np.squeeze(np.array(gray_image).astype(np.float32))
+				m,v = cv2.PCACompute(xarr)
+				arr = np.array(v)
+				flat_arr = arr.ravel()
+				training_set.append(flat_arr)
+				training_labels.append(label)
+	print 'done ',root
 
 trainData = np.float32(training_set)
 responses = training_labels
 #svm = cv2.SVM()
-svm = svm.SVC()
+svm = sklearn.svm.LinearSVC(C = 1.0,  random_state = 0)
 svm.fit(trainData,responses)
-joblib.dump(svm, 'svm.pkl')
+joblib.dump(svm, 'svm.pkl'+ '.gz', compress=('gzip', 3))
 #svm.save('svm_data.dat')
 print 'training done!'
+exit()
+
+svm = joblib.load('svm.pkl')
 print 'testing...'
 
 path = 'test/'
@@ -44,6 +50,7 @@ for root, dirs, files in os.walk(path):
     for name in files:
         if name.endswith((".png")):
         	if (os.path.getsize(root + str('/') + name)) != 0 :
+        		label = root.split('/')[1]
         		img = cv2.imread(root + str('/') + name)
         		res=cv2.resize(img,(250,250))
         		gray_image = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
@@ -52,9 +59,21 @@ for root, dirs, files in os.walk(path):
         		arr= np.array(v)
         		flat_arr= arr.ravel()
         		testing_set.append(flat_arr)
-
+        		testing_labels.append(label)
+t = 0
+f = 0
 testData = np.float32(testing_set)
 responses = svm.predict(testData)
 
+for i in range(len(responses)):
+	if responses[i] == testing_labels[i]:
+		t += 1
+	else:
+		f += 1
+
+
 print responses
 print set(responses)
+print len(responses),' ', len(testing_labels)
+print 'True ',t
+print 'False ',f
