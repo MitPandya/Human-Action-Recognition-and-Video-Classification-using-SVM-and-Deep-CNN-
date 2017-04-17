@@ -2,6 +2,8 @@ import os.path
 import cv2
 import sys
 import os
+from shutil import rmtree
+import math
 
 global root_directory
 root_directory = os.getcwd()
@@ -18,7 +20,7 @@ if task not in ['train', 'test']:
 
 def write_frames(file):
 	vidcap = cv2.VideoCapture(read_dir+file.strip())
-	success,image = vidcap.read()
+	frameRate = 10 # frame rate
 	cur_class = file.strip().split('/')[0]
 	path = write_dir+cur_class
 	if not os.path.exists(path):
@@ -27,29 +29,34 @@ def write_frames(file):
 		count = 0
 	if os.getcwd() != path:
 		os.chdir(path)
-	while success:
-		success,image = vidcap.read()
-		cv2.imwrite("frame%d.png" % count, image)
+	while(vidcap.isOpened()):
+		frameId = vidcap.get(1) #current frame number
+		success, frame = vidcap.read()
+		if (success != True):
+			break
+		if (frameId % math.floor(frameRate) == 0):
+			cv2.imwrite("frame%d.png" % count, frame)
+			count += 1
 		if cv2.waitKey(10) == 27:
 			break
-		count += 1
+	vidcap.release()
 	os.chdir(root_directory)
 
 read_dir = 'UCF101/'
 if task == 'train':
 	write_dir = 'train/'
 	file = open('train_list','r')
+	if os.path.exists('train'):
+		rmtree('train')
 else:
 	write_dir = 'test/'
 	file = open('test_list','r')
-
+	if os.path.exists('test'):
+		rmtree('test')
+		
 global count
 count = 0
 c = 0
-if os.path.exists('classes'):
-	rmtree('classes')
-if os.path.exists('test_set'):
-	rmtree('test_set')
 
 for f in file:
 	c += 1
@@ -57,30 +64,3 @@ for f in file:
 		write_frames(f)
   		print "processed %d th video clip." %(c)
 file.close()
-
-'''def extract_image(file):
-	vidcap = cv2.VideoCapture(file)
-	success,image = vidcap.read()
-	global count
-	success = True
-	os.chdir(main_dir+'/'+output_dir)
-	print 'writing to ',output_dir
-	while success:
-  		success,image = vidcap.read()
-  		cv2.imwrite("frame%d.png" % count, image)
-  		if cv2.waitKey(10) == 27:
-  			break
-  		count += 1
-try:
-	data_list = os.listdir(video_path)
-	os.mkdir(output_dir)
-	k = 1
-	global count
-	count = 0
-	for files in data_list:
-		os.chdir(main_dir+'/'+video_path)
-		extract_image(files)
-		print "processed %d th video clip." %(k)
-		k += 1
-except:
-	print 'Error writing frames' '''

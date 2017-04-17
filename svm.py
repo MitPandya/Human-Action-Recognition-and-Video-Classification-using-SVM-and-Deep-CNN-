@@ -9,8 +9,7 @@ train_path = 'train/'
 training_set = []
 training_labels = []
 images = [f for f in listdir(train_path) if isfile(join(train_path, f))]
-print images
-exit()
+
 i = 0
 for file in images:
 	if (os.path.getsize(train_path + str('/') + file)) != 0 :
