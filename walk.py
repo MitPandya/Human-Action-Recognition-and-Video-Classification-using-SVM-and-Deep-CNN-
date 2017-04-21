@@ -19,10 +19,11 @@ for root, dirs, files in os.walk(path):
 			if (os.path.getsize(root + str('/') + name)) != 0 :
 				label = root.split('/')[1]
 				img = cv2.imread(root +str('/')+ name)
-				res = cv2.resize(img,(250,250))
+				#res = cv2.resize(img,(250,250))
+				res = img
 				gray_image = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
 				xarr = np.squeeze(np.array(gray_image).astype(np.float32))
-				m,v = cv2.PCACompute(xarr)
+				m,v = cv2.PCACompute(xarr, mean = np.array([]))
 				arr = np.array(v)
 				flat_arr = arr.ravel()
 				training_set.append(flat_arr)
@@ -34,12 +35,9 @@ responses = training_labels
 #svm = cv2.SVM()
 svm = sklearn.svm.LinearSVC(C = 1.0,  random_state = 0)
 svm.fit(trainData,responses)
-joblib.dump(svm, 'svm.pkl'+ '.gz', compress=('gzip', 3))
 #svm.save('svm_data.dat')
 print 'training done!'
-exit()
 
-svm = joblib.load('svm.pkl')
 print 'testing...'
 
 path = 'test/'
@@ -52,10 +50,11 @@ for root, dirs, files in os.walk(path):
         	if (os.path.getsize(root + str('/') + name)) != 0 :
         		label = root.split('/')[1]
         		img = cv2.imread(root + str('/') + name)
-        		res=cv2.resize(img,(250,250))
+        		#res=cv2.resize(img,(250,250))
+        		res = img
         		gray_image = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
         		xarr=np.squeeze(np.array(gray_image).astype(np.float32))
-        		m,v=cv2.PCACompute(xarr)
+        		m,v=cv2.PCACompute(xarr, mean = np.array([]))
         		arr= np.array(v)
         		flat_arr= arr.ravel()
         		testing_set.append(flat_arr)
@@ -71,9 +70,15 @@ for i in range(len(responses)):
 	else:
 		f += 1
 
-
 print responses
 print set(responses)
 print len(responses),' ', len(testing_labels)
 print 'True ',t
 print 'False ',f
+
+file = open('results_svm.txt','w')
+for i in range(len(responses)):
+	file.write(testing_labels[i]+"  "+responses[i]+'\n')
+file.close()
+
+joblib.dump(svm, 'svm.pkl'+ '.gz', compress=('gzip', 3))

@@ -20,7 +20,7 @@ if task not in ['train', 'test']:
 
 def write_frames(file):
 	vidcap = cv2.VideoCapture(read_dir+file.strip())
-	frameRate = 10 # frame rate
+	frameRate = 10 #rame rate
 	class_ = f.strip().split('/')[0]
 	global classes
 	c = classes[class_]
