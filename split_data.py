@@ -4,6 +4,9 @@ import sys
 import os
 from shutil import rmtree
 import math
+from datetime import datetime
+import skvideo.io
+import json
 
 global root_directory
 root_directory = os.getcwd()
@@ -20,7 +23,10 @@ if task not in ['train', 'test']:
 
 def write_frames(file):
 	vidcap = cv2.VideoCapture(read_dir+file.strip())
-	frameRate = 10 # frame rate
+	metadata = skvideo.io.ffprobe(read_dir+file.strip())
+	print(metadata.keys())
+	exit()
+	frameRate = 10
 	cur_class = file.strip().split('/')[0]
 	path = write_dir+cur_class
 	if not os.path.exists(path):
