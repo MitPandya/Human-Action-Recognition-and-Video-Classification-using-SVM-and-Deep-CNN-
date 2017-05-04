@@ -1,7 +1,7 @@
 # ML_Capstone ( Human Action Recognition and Video Classification using SVM and Deep-CNN )
 
 ## code instructions
-Please install requirement packages from requirements.txt file.
+Please install requirement packages from requirements.txt file. <br />
 Please download data files from this site http://crcv.ucf.edu/data/UCF101/UCF101.rar <br />
 
 `SVM`
