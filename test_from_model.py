@@ -22,8 +22,8 @@ for root, dirs, files in os.walk(path):
         	if (os.path.getsize(root + str('/') + name)) != 0 :
         		label = root.split('/')[1]
         		img = cv2.imread(root + str('/') + name)
-        		#res=cv2.resize(img,(250,250))
-        		res = img
+        		res=cv2.resize(img,(250,250))
+        		#res = img
         		gray_image = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
         		xarr=np.squeeze(np.array(gray_image).astype(np.float32))
         		m,v=cv2.PCACompute(xarr, mean = np.array([]))
