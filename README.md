@@ -11,12 +11,13 @@ python split_data.py test
 This will create train and test folder with relevant video frames.
 
 2. To train and test the above created data run the following command <br />
-python walk.py
+python walk.py <br />
+                                  <b> OR </b>
+3. To test the data from already trained model
+gunzip svm.pkl.gz file to svm.pkl and run python test_from_model.py
 
-3. To evaluate the results and create heatmap run <br />
+4. To evaluate the results and create heatmap run <br />
 python eval_results.py
-
-Additionally you may use our already trained svm model (svm.pkl.gz ) on test data as mentioned above. 
 
 `CNN`
 1. To create train and test data for CNN run the following commands <br />
