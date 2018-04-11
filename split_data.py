@@ -25,7 +25,6 @@ def write_frames(file):
 	vidcap = cv2.VideoCapture(read_dir+file.strip())
 	metadata = skvideo.io.ffprobe(read_dir+file.strip())
 	print(metadata.keys())
-	exit()
 	frameRate = 10
 	cur_class = file.strip().split('/')[0]
 	path = write_dir+cur_class
