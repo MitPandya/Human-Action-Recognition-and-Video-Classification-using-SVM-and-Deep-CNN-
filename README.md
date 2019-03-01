@@ -32,8 +32,8 @@ now run, python convert-images-to-cifar-format.py
 this will create batch file for train and test.
 Copy and paste these files to /tmp/cifar10-data/ folder
 
-3. Next train cifar10 model on our above created dataset <br />
+3. Next train cifar10 model (https://github.com/tensorflow/models/tree/master/tutorials/image/cifar10) on our above created dataset <br /> 
 python cifar10/cifar10_train.py 
 
-4. To test from trained cifar10 model try <br />
+4. To test from trained cifar10 model (https://github.com/tensorflow/models/tree/master/tutorials/image/cifar10) try <br />
 python cifar10_eval.py
